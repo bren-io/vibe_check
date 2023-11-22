@@ -1,4 +1,4 @@
-# SE_fall23
+# About
 
 This program takes a file containing reddit urls, gets the HTML data from the urls, and sends them to OpenAI API to process
 
