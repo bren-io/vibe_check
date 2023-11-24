@@ -63,7 +63,7 @@ def graph_data():
                 matplt.xlabel('Sentiments')
                 matplt.ylabel('Count')
                 matplt.title(f'{file_name}')
-                matplt.savefig(f"data/plots/{file_name}.png")
+                matplt.savefig(f'data/plots/{file_name.replace(".json", ".png")}')
                 
 if __name__ == "__main__":
 #    main()
