@@ -28,8 +28,8 @@ def main():
     ufile = sys.argv[1]
     json_url_list = "data/raw/url_list.json"
     json_url_dict = "data/raw/url_dict.json"
-    tag_dir = "data/processed/"
-    sentiment_dir = f"{tag_dir}sentiments"
+    tag_dir = "data/processed"
+    sentiment_dir = f"{tag_dir}/sentiments"
 
     
     # Driver
