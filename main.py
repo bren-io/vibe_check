@@ -47,6 +47,7 @@ def main():
 # Create visual representation of sentiments for a post
 def graph_data():
     sentiment_dir = "data/processed/sentiments"
+    plot_dir = "data/plots"
     file_list = os.listdir(sentiment_dir)
 
     for file_name in file_list:
@@ -62,8 +63,8 @@ def graph_data():
                 matplt.bar(vibe_count.index, vibe_count.values)
                 matplt.xlabel('Sentiments')
                 matplt.ylabel('Count')
-                matplt.title(f'{file_name}')
-                matplt.savefig(f'data/plots/{file_name.replace(".json", ".png")}')
+                matplt.title(f'{file_name.replace("reddit_r_", "").replace("comments_", "").replace("_sentiment.json", "")}')
+                matplt.savefig(f'{plot_dir}/{file_name.replace(".json", ".png")}')
                 
 if __name__ == "__main__":
 #    main()
