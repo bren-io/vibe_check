@@ -59,3 +59,7 @@ Optionally you can replace the environment variable name with a custom name
 
 Refactored a TON from project4 Usage and Installation havent changed though other than the fact that you pass a file containing a url now instead of the actual url
 Also note that this implementation is to only handle roughly 4096 tokens. See gpt_wrapper.py:format_gpt_request()
+
+# Project 6
+
+Need to encapsulate a lot of features and maybe make a class to work with instead of modules. NOTE that when pushing the matplotlib graphs to github, you may sometimes need to delete them from github first. Simply remove them from your local directory and push the changes. CHORE Look at your other project "Combot" for better design.
