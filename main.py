@@ -59,7 +59,7 @@ def graph_data():
                 df = json_to_pandas(json_data)
                 vibe_count = df.loc[0].value_counts()
 
-                # Reset plot
+                # Reset graph
                 matplt.clf()
                 
                 # Plot the data frame
