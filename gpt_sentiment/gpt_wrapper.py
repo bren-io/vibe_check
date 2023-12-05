@@ -11,6 +11,7 @@ import openai
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
+import time
 # import tiktoken # Not using yet
 
 
@@ -26,7 +27,7 @@ client = OpenAI(
     api_key = os.environ.get("OPENAI_API_KEY"),
 )
 delimiter = '%%'
-prompt = f"You are a helpful psychiatrist that can analyze the sentiment of messages. Only return the sentiments of the given messages, delimited by {delimiter}. Format your response as comma seperated values" # Prompt to tell the GPT model how to behave
+prompt = f'You are a helpful analytical psychologist. Determine the sentiment of these comments separately. Each comment ends with {delimiter}. Only indicate if the comment is "+" for positive, "0" for neutral, or "-" for negative. Output as a single string with no white space' # GPT behaviour
 
 ########
 # END DATA
@@ -37,9 +38,9 @@ prompt = f"You are a helpful psychiatrist that can analyze the sentiment of mess
 ##############################
 
 def format_gpt_request(url_comments):
-    comments_as_string = delimiter.join(url_comments) # Needed to send all comments in a single request
-    comments_as_string = comments_as_string[:7777] # Cut the end off, max tokens for prompt + response is 4096, so half 2048, multiply by 4 (avg token character count) and subtract some extra for error
-        
+    comments_as_string = delimiter.join(url_comments)# Needed to send all comments in a single request
+    comments_as_string = comments_as_string[:4096] + delimiter # Cut the end off, max tokens for prompt + response is 4096, so half 2048, multiply by 4 (avg token character count). Here we multiply by 2 for errors in counting tokens.
+    
     return comments_as_string
     
 ##############################
@@ -50,18 +51,20 @@ def request_sentiment(user_prompt, prompt_content):
     #print(f"Working on {prompt_content}") # For debugging can remove
     # See OpenAI doc for usage
     assistant = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-3.5-turbo-1106",
+        temperature=0.7,
         messages=[
             {"role": "system", "content": user_prompt},
             {"role": "user", "content": prompt_content}
         ],
-        max_tokens=2048
     )
     if assistant.choices[0].finish_reason == 'length':
+        time.sleep(11)
         print("Max tokens for model reached. File still created")
         sentiments = assistant.choices[0].message.content
         return sentiments
     else:
+        time.sleep(11)
         sentiments = assistant.choices[0].message.content
         return sentiments
 
@@ -70,12 +73,12 @@ def request_sentiment(user_prompt, prompt_content):
 ###########################
 def write_sentiment(url, url_tag_content, sentiment_output_dir):
     analysis = request_sentiment(prompt, format_gpt_request(url_tag_content))
+    analysis_list = [value for value in analysis]
     try:
-        sentiment_buffer = {url: analysis}
-        output_sentimentf = os.path.join(sentiment_output_dir, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}_sentiment.json")
+        output_sentimentf = os.path.join(sentiment_output_dir, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}sentiment.json")
         with open(output_sentimentf, 'w', encoding='utf-8') as file:
-            json.dump(sentiment_buffer, file, indent=2)
-            print(f"JSON HTML TAG SENTIMENT Dict: {output_sentimentf}")
+            json.dump(analysis_list, file, indent=2)
+            print(f"JSON HTML TAG SENTIMENT List: {output_sentimentf}")
 
 
         return output_sentimentf

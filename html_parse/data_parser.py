@@ -22,7 +22,7 @@ def get_html_tags(url, url_content, tag_path):
         comment_texts = [comment.get_text().strip().replace('\u2019', "'").replace('\n', ".") for comment in comments[2:]] if comments else None
         tag_buffer = {url: comment_texts}
         
-        output_tagf = os.path.join(tag_path, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}_tags.json")
+        output_tagf = os.path.join(tag_path, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}tags.json")
 
         with open(output_tagf, 'w', encoding='utf-8') as tag_file:
             json.dump(tag_buffer, tag_file, indent=2)    

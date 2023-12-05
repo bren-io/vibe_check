@@ -33,7 +33,7 @@ def read_json(in_file):
 def write_json(in_file, out_file):
     try:
         with open(in_file, 'r', encoding='utf-8') as file:
-            urls = [line.strip() for line in file]
+            urls = [line.replace('www.', 'old.').strip() for line in file]
             
         with open(out_file, 'w', encoding='utf-8') as json_file:
             json.dump(urls, json_file, indent=2)
