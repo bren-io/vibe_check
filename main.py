@@ -4,28 +4,32 @@
 # in a reddit website
 #-------------------------------------
 
-# Need sys for reading from command line
-
 import sys
 import os
 import json
-from html_request.get_html_content import url_to_json_dict
-from html_request.json_helper import read_json
-from html_parse.data_parser import get_html_tags
+from html_request import reddit_scraper
+from html_parse import reddit_reaper
 from gpt_sentiment.gpt_wrapper import write_sentiment
 from visualizer.pandas_helper import json_to_pandas
 from visualizer.graph_helper import data_to_graph
 import matplotlib.pyplot as matplt
 
-def main():
+#-------------------------
+# Constants
+#-----------------------
 
-    # Usage
-    if len(sys.argv) != 2:
-        print("Usage: python main.py <URL_FILE>")
-        sys.exit(1)
+data_dir = "data"
+raw_dir = f"{data_dir}/raw"
+reap_dir = f"{data_dir}/processed"
+vibe_dir = f"{reap_dir}/sentiments"
+plot_dir = f"{data_dir}/plots"
 
-    # Data
-    ufile = sys.argv[1]
+
+#----------------------
+# Functions
+#---------------------
+
+def process_url():
     json_url_list = "data/raw/url_list.json"
     json_url_dict = "data/raw/url_dict.json"
     tag_dir = "data/processed"
@@ -69,6 +73,29 @@ def graph_data():
                 matplt.title(f'{file_name.replace("reddit_r_", "").replace("comments_", "").replace("_sentiment.json", "")}')
                 matplt.savefig(f'{plot_dir}/{file_name.replace(".json", ".png")}')
                 
+def main():
+    # Usage
+    if len(sys.argv) != 2:
+        print("Usage: python main.py <URL_FILE>")
+        sys.exit(1)
+        
+    # Get file path
+    file_path = sys.argv[1]
+    if file_path.startswith('"') and file_path.endswith('"'):
+        file_path = file_path[1:-1]
+    explicit_path = os.path.abspath(file_path)
+
+    # Open file
+    if os.path.isfile(explicit_path):
+        html_raw = reddit_scraper.get_html_raw(explicit_path, raw_dir)
+        for url, html in html_raw.items():
+            html_tag = reddit_reaper.get_html_tag(url, html_raw[url], reap_dir)
+    else:
+        print(f"Error: {explicit_path} does not exist")
+
+        
+#    process_url()
+#    graph_data()
+
 if __name__ == "__main__":
-#    main()
-    graph_data()
+    main()
