@@ -59,6 +59,9 @@ def graph_data():
                 df = json_to_pandas(json_data)
                 vibe_count = df.loc[0].value_counts()
 
+                # Reset plot
+                matplt.clf()
+                
                 # Plot the data frame
                 matplt.bar(vibe_count.index, vibe_count.values)
                 matplt.xlabel('Sentiments')
