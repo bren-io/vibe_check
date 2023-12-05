@@ -31,15 +31,11 @@ OPENAI_API_KEY=abc123
 python main.py <url_file>
 ```
 
-# Project 3
+# OpenAI
 
-I did create a branch when I did this part, when I merged it with my main branch I deleted the project3 branch. So you will not see it here.
+Go to the openai.com to sign up. Once you login there will be two option between chatgpt and API. After selecting API go to the menu and select API keys. From here you may create a unique key that will be the authenticator for making calls to the API.
 
-# Project 4
-
-First you would go to the openai.com to sign up. Once you login there will be two option between chatgpt and API. After selecting API go to the menu and select API keys. From here you may create a unique key that will be the authenticator for making calls to the API. You MUST save your API key or write it down somewhere for security. If you lose it you'll have to make a new one.
-
-Now to make a call you will need to install the openai package. After you install this package you can refrence the library in your program by importing it. There are two ways you can invoke the openai class, directly or using the contstructor. If called directly you must use
+You can refrence the library in your program by importing it. There are two ways you can invoke the openai class, directly or using the contstructor. If called directly you must use
 
 ```
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -55,11 +51,12 @@ client = OpenAI(
 
 Optionally you can replace the environment variable name with a custom name
 
-# Project 5
+# CHORES
 
-Refactored a TON from project4 Usage and Installation havent changed though other than the fact that you pass a file containing a url now instead of the actual url
-Also note that this implementation is to only handle roughly 4096 tokens. See gpt_wrapper.py:format_gpt_request()
+Implementation is to only handle roughly 4096 tokens per request. See how to count tokens gpt_wrapper.py:format_gpt_request()
 
-# Project 6
+Need to encapsulate a lot of features and maybe make a class to work with instead of modules.
 
-Need to encapsulate a lot of features and maybe make a class to work with instead of modules. NOTE that when pushing the matplotlib graphs to github, you may sometimes need to delete them from github first. Simply remove them from your local directory and push the changes. CHORE Look at your other project "Combot" for better design.
+Should allow user to interact and change file directories, switch GPT model, file formats.
+
+When pushing the matplotlib graphs to github, you may sometimes need to delete them from github first. Simply remove them from your local directory and push the changes.
