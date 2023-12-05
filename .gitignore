@@ -1,6 +1,10 @@
 # Environment stuff
 .env
 myenv/
+venv/
+pyenv/
+environment/
+environ/
 __pycache__
 
 # Emacs IDE backup files
