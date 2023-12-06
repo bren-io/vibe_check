@@ -15,8 +15,9 @@ def get_graph(vibe_dir, plot_dir):
                 df = pd.read_json(file_path)
 
                 if df is not None:
-                    vibe_count = df.loc[0].value_counts()
-                
+                    vibe_count = df.iloc[:, 0].value_counts()
+                    
+                    
                     # Reset graph
                     plt.clf()
                 
