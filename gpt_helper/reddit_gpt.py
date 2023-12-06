@@ -12,7 +12,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from json_helper import reddit_worker
 import time
-# import tiktoken # Not using yet
+#import tiktoken # Not using yet
 
 
 #-------------------------
@@ -26,26 +26,38 @@ load_dotenv(env_path)
 client = OpenAI(
     api_key = os.environ.get("OPENAI_API_KEY"),
 )
-delimiter = '%%'
+delimiter = ' %% '
 prompt = f'You are a helpful analytical psychologist. Determine the sentiment of these comments separately. Each comment ends with {delimiter}. Only indicate if the comment is "+" for positive, "0" for neutral, or "-" for negative. Output as a single string with no white space' # GPT behaviour
-
+MAX_CHAR_BYTES = 6144 # Token max for request
 
 #----------------------------
 # Functions
 #----------------------------
 
+
 def format_gpt_request(url_comments):
-    comments_as_string = delimiter.join(url_comments)# Needed to send all comments in a single request
-    comments_as_string = comments_as_string[:4096] + delimiter # Cut the end off, max tokens for prompt + response is 4096, so half 2048, multiply by 4 (avg token character count). Here we multiply by 2 for errors in counting tokens.
+     comments_str = delimiter.join(url_comments)
+     curr_diff = 0
+     min_diff = float('inf')
+     trim_pos = 0
+     
+     for i in range(len(comments_str)):
+         if comments_str[i:i + len(delimiter)] == delimiter:
+             curr_diff = abs(len(comments_str[:i + len(delimiter)].encode()) - MAX_CHAR_BYTES)
+             
+             if curr_diff < min_diff:
+                 trim_pos = i + len(delimiter)
+                 min_diff = curr_diff
+
+     comments_str = comments_str[:trim_pos]
+     return comments_str
     
-    return comments_as_string
     
 ##############################
 # Make a call to GPT, you can use any
 #############################
 def request_sentiment(user_prompt, prompt_content):
     sentiments = ""
-    #print(f"Working on {prompt_content}") # For debugging can remove
     # See OpenAI doc for usage
     assistant = client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
@@ -70,6 +82,8 @@ def request_sentiment(user_prompt, prompt_content):
 ###########################
 def get_vibe(url, tag_data, vibe_dir):
     try:
+        analysis = ""
+        vibe_values = []
         vibe_dict = {}
         analysis = request_sentiment(prompt, format_gpt_request(tag_data))
         vibe_values = [value for value in analysis]

@@ -9,7 +9,7 @@ import os
 import json
 from html_request import reddit_scraper
 from html_parse import reddit_reaper
-from gpt_helper import openai_worker
+from gpt_helper import reddit_gpt
 from visualizer.pandas_helper import json_to_pandas
 from visualizer.graph_helper import data_to_graph
 import matplotlib.pyplot as matplt
@@ -24,29 +24,9 @@ reap_dir = f"{data_dir}/processed"
 vibe_dir = f"{reap_dir}/sentiments"
 plot_dir = f"{data_dir}/plots"
 
-
 #----------------------
 # Functions
 #---------------------
-
-def process_url():
-    json_url_list = "data/raw/url_list.json"
-    json_url_dict = "data/raw/url_dict.json"
-    tag_dir = "data/processed"
-    sentiment_dir = f"{tag_dir}/sentiments"
-
-    
-    # Driver
-
-    # Create a dict file from the urls
-    if url_to_json_dict(ufile, json_url_list, json_url_dict):
-        url_dict = read_json(json_url_dict)
-        # Get the tags from HTML and sentiments
-        for url, content in url_dict.items():
-            url_tag_file = get_html_tags(url, url_dict[url], tag_dir)
-            url_tag_dict = read_json(url_tag_file)
-            write_sentiment(url, url_tag_dict[url], sentiment_dir)
-
 
 # Create visual representation of sentiments for a post
 def graph_data():
@@ -73,7 +53,7 @@ def graph_data():
                 matplt.title(f'{file_name.replace("reddit_r_", "").replace("comments_", "").replace("_sentiment.json", "")}')
                 matplt.savefig(f'{plot_dir}/{file_name.replace(".json", ".png")}')
                 
-def main():
+def reddit_process():
     # Usage
     if len(sys.argv) != 2:
         print("Usage: python main.py <URL_FILE>")
@@ -90,13 +70,13 @@ def main():
         html_raw = reddit_scraper.get_html_raw(explicit_path, raw_dir)
         for url, html in html_raw.items():
             html_tag = reddit_reaper.get_html_tag(url, html_raw[url], reap_dir)
-            tag_vibe = openai_worker.get_vibe(url, html_tag[url], vibe_dir)
+            tag_vibe = reddit_gpt.get_vibe(url, html_tag[url], vibe_dir)
+#            vibe_df = reddit_pd.get_df(url, tag_vibe[url])
     else:
         print(f"Error: {explicit_path} does not exist")
 
-        
-#    process_url()
-#    graph_data()
+def main():
+    return None
 
 if __name__ == "__main__":
-    main()
+    reddit_process() # Creates files relevant to reddit posts
