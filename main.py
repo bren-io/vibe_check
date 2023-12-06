@@ -10,9 +10,7 @@ import json
 from html_request import reddit_scraper
 from html_parse import reddit_reaper
 from gpt_helper import reddit_gpt
-from visualizer.pandas_helper import json_to_pandas
-from visualizer.graph_helper import data_to_graph
-import matplotlib.pyplot as matplt
+from visualizer import reddit_pandas
 
 #-------------------------
 # Constants
@@ -29,29 +27,8 @@ plot_dir = f"{data_dir}/plots"
 #---------------------
 
 # Create visual representation of sentiments for a post
-def graph_data():
-    sentiment_dir = "data/processed/sentiments"
-    plot_dir = "data/plots"
-    file_list = os.listdir(sentiment_dir)
-
-    for file_name in file_list:
-        if file_name.endswith(".json"):
-            file_path = os.path.join(sentiment_dir, file_name)
-            with open(file_path, 'r', encoding='utf-8') as file:
-                # Load json to pandas data frame and count values
-                json_data = json.load(file)
-                df = json_to_pandas(json_data)
-                vibe_count = df.loc[0].value_counts()
-
-                # Reset graph
-                matplt.clf()
-                
-                # Plot the data frame
-                matplt.bar(vibe_count.index, vibe_count.values)
-                matplt.xlabel('Sentiments')
-                matplt.ylabel('Count')
-                matplt.title(f'{file_name.replace("reddit_r_", "").replace("comments_", "").replace("_sentiment.json", "")}')
-                matplt.savefig(f'{plot_dir}/{file_name.replace(".json", ".png")}')
+def reddit_graph():
+    reddit_pandas.get_graph(vibe_dir, plot_dir)
                 
 def reddit_process():
     # Usage
@@ -79,4 +56,5 @@ def main():
     return None
 
 if __name__ == "__main__":
-    reddit_process() # Creates files relevant to reddit posts
+#    reddit_process() # Creates files relevant to reddit posts
+    reddit_graph()   # Creates graphs from files

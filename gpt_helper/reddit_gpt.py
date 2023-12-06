@@ -34,7 +34,6 @@ MAX_CHAR_BYTES = 6144 # Token max for request
 # Functions
 #----------------------------
 
-
 def format_gpt_request(url_comments):
      comments_str = delimiter.join(url_comments)
      curr_diff = 0
@@ -52,10 +51,6 @@ def format_gpt_request(url_comments):
      comments_str = comments_str[:trim_pos]
      return comments_str
     
-    
-##############################
-# Make a call to GPT, you can use any
-#############################
 def request_sentiment(user_prompt, prompt_content):
     sentiments = ""
     # See OpenAI doc for usage
@@ -68,18 +63,14 @@ def request_sentiment(user_prompt, prompt_content):
         ],
     )
     if assistant.choices[0].finish_reason == 'length':
-        time.sleep(11)
-        print("Max tokens for model reached. File still created")
-        sentiments = assistant.choices[0].message.content
-        return sentiments
+        time.sleep(7)
+        print("Max tokens for model reached. Contact support")
+        return None
     else:
-        time.sleep(11)
+        time.sleep(7)
         sentiments = assistant.choices[0].message.content
         return sentiments
 
-###########################
-# Write the sentiments out to a file
-###########################
 def get_vibe(url, tag_data, vibe_dir):
     try:
         analysis = ""
