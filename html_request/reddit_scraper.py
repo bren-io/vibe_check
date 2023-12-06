@@ -1,7 +1,7 @@
 #--------------------------------------
 # This module takes a list of URL's and creates a json dict as "URL: HTML"
 #
-# CHORE: Maybe see about moving all the json related functions into the json_helper.py script
+# 
 #-------------------------------------
 
 import requests
@@ -44,9 +44,9 @@ def get_html_raw(f_urls, raw_dir):
                 for entry in url_list:
                     html_data[entry] = download_text(entry, 50, 0.1)
 
-                if reddit_worker.make_html_raw(html_data, html_fname):
+                if reddit_worker.write_dict(html_data, html_fname):
                     return html_data
-
+                return None
             #--------
             # CHORE
             #-------

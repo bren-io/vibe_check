@@ -11,7 +11,7 @@
 import os
 import lxml
 import chardet
-import json
+from json_helper import reddit_worker
 from bs4 import BeautifulSoup
 
 def get_html_tag(url, html_data, reap_dir):
@@ -24,11 +24,9 @@ def get_html_tag(url, html_data, reap_dir):
         
         tags_fname = os.path.join(reap_dir, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}tags.json")
 
-        with open(tags_fname, 'w', encoding='utf-8') as tag_file:
-            json.dump(html_tags, tag_file, indent=2)    
-            print(f"Tag HTML Data: {tags_fname}")
-
-        return html_tags
+        if reddit_worker.write_dict(html_tags, tags_fname):
+            return html_tags
+        return None
     
     except Exception as e:
         print("Error: ", str(e))

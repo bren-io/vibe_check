@@ -10,14 +10,14 @@ import os
 import openai
 from openai import OpenAI
 from dotenv import load_dotenv
-import json
+from json_helper import reddit_worker
 import time
 # import tiktoken # Not using yet
 
 
-#######
-# DATA
-#######
+#-------------------------
+# Constants
+#--------------------------
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(script_dir, "..", ".env")
@@ -29,13 +29,10 @@ client = OpenAI(
 delimiter = '%%'
 prompt = f'You are a helpful analytical psychologist. Determine the sentiment of these comments separately. Each comment ends with {delimiter}. Only indicate if the comment is "+" for positive, "0" for neutral, or "-" for negative. Output as a single string with no white space' # GPT behaviour
 
-########
-# END DATA
-########
 
-##############################
-# Format list to delimited string
-##############################
+#----------------------------
+# Functions
+#----------------------------
 
 def format_gpt_request(url_comments):
     comments_as_string = delimiter.join(url_comments)# Needed to send all comments in a single request
@@ -71,18 +68,17 @@ def request_sentiment(user_prompt, prompt_content):
 ###########################
 # Write the sentiments out to a file
 ###########################
-def write_sentiment(url, url_tag_content, sentiment_output_dir):
-    analysis = request_sentiment(prompt, format_gpt_request(url_tag_content))
-    analysis_list = [value for value in analysis]
+def get_vibe(url, tag_data, vibe_dir):
     try:
-        output_sentimentf = os.path.join(sentiment_output_dir, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}sentiment.json")
-        with open(output_sentimentf, 'w', encoding='utf-8') as file:
-            json.dump(analysis_list, file, indent=2)
-            print(f"JSON HTML TAG SENTIMENT List: {output_sentimentf}")
+        vibe_dict = {}
+        analysis = request_sentiment(prompt, format_gpt_request(tag_data))
+        vibe_values = [value for value in analysis]
+        vibe_dict[url] = vibe_values
+        vibe_fname = os.path.join(vibe_dir, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}sentiment.json")
 
-
-        return output_sentimentf
+        if reddit_worker.write_dict(vibe_dict, vibe_fname):
+            return vibe_dict
 
     except Exception as e:
-        print("Error " + e + " has occured")
+        print(f"Error: {e}")
         return None

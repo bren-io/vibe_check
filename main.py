@@ -9,7 +9,7 @@ import os
 import json
 from html_request import reddit_scraper
 from html_parse import reddit_reaper
-from gpt_sentiment.gpt_wrapper import write_sentiment
+from gpt_helper import openai_worker
 from visualizer.pandas_helper import json_to_pandas
 from visualizer.graph_helper import data_to_graph
 import matplotlib.pyplot as matplt
@@ -85,11 +85,12 @@ def main():
         file_path = file_path[1:-1]
     explicit_path = os.path.abspath(file_path)
 
-    # Open file
+    # Open file and process
     if os.path.isfile(explicit_path):
         html_raw = reddit_scraper.get_html_raw(explicit_path, raw_dir)
         for url, html in html_raw.items():
             html_tag = reddit_reaper.get_html_tag(url, html_raw[url], reap_dir)
+            tag_vibe = openai_worker.get_vibe(url, html_tag[url], vibe_dir)
     else:
         print(f"Error: {explicit_path} does not exist")
 
