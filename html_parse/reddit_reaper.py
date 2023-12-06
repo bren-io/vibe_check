@@ -11,25 +11,22 @@
 import os
 import lxml
 import chardet
-import json
+from json_helper import reddit_worker
 from bs4 import BeautifulSoup
 
-def get_html_tags(url, url_content, tag_path):
+def get_html_tag(url, html_data, reap_dir):
     try:
-        soup = BeautifulSoup(url_content, 'lxml')
+        soup = BeautifulSoup(html_data, 'lxml')
         body_tag = soup.find("body")
         comments = body_tag.find_all("div", class_="md")
         comment_texts = [comment.get_text().strip().replace('\u2019', "'").replace('\n', ".") for comment in comments[2:]] if comments else None
-        tag_buffer = {url: comment_texts}
+        html_tags = {url: comment_texts}
         
-        output_tagf = os.path.join(tag_path, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}tags.json")
+        tags_fname = os.path.join(reap_dir, f"{url.replace('https://old.reddit.com', 'reddit').replace('/', '_')}tags.json")
 
-        with open(output_tagf, 'w', encoding='utf-8') as tag_file:
-            json.dump(tag_buffer, tag_file, indent=2)    
-            print(f"JSON HTML TAG Dict: {output_tagf}")
-
-            
-        return output_tagf
+        if reddit_worker.write_dict(html_tags, tags_fname):
+            return html_tags
+        return None
     
     except Exception as e:
         print("Error: ", str(e))
