@@ -15,15 +15,14 @@ def get_graph(vibe_dir, plot_dir):
             df = json_to_pandas(json_data)
 
             if df is not None:
-                vibe_count = df.loc[0].value_counts()
-
+                vibe_count = df.iloc[0].value_counts()
+                vibe_labels = df.index.tolist()
+                
                 # Reset graph
                 plt.clf()
-
-                vibe_str = [str(vibe) for vibe in vibe_count.index]
                 
                 # Plot the data frame
-                plt.bar(vibe_str, vibe_count.values)
+                plt.bar(vibe_labels, vibe_count.values)
                 plt.xlabel('Sentiments')
                 plt.ylabel('Count')
                 plt.title(f'{file_name.replace("reddit_r_", "").replace("comments_", "").replace("_sentiment.json", "")}')
