@@ -56,5 +56,5 @@ def main():
     return None
 
 if __name__ == "__main__":
-#    reddit_process() # Creates files relevant to reddit posts
+    reddit_process() # Creates files relevant to reddit posts
     reddit_graph()   # Creates graphs from files
