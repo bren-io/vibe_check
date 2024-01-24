@@ -29,14 +29,15 @@ plot_dir = f"{data_dir}/plots"
 # Create visual representation of sentiments for a post
 def reddit_graph():
     reddit_pandas.get_graph(vibe_dir, plot_dir)
-                
+
+# Creates file from a reddit post
 def reddit_process():
     # Usage
     if len(sys.argv) != 2:
         print("Usage: python main.py <URL_FILE>")
         sys.exit(1)
         
-    # Get file path
+    # Get url file path
     file_path = sys.argv[1]
     if file_path.startswith('"') and file_path.endswith('"'):
         file_path = file_path[1:-1]
@@ -48,7 +49,6 @@ def reddit_process():
         for url, html in html_raw.items():
             html_tag = reddit_reaper.get_html_tag(url, html_raw[url], reap_dir)
             tag_vibe = reddit_gpt.get_vibe(url, html_tag[url], vibe_dir)
-#            vibe_df = reddit_pd.get_df(url, tag_vibe[url])
     else:
         print(f"Error: {explicit_path} does not exist")
 
