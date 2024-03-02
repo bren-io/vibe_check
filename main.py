@@ -17,6 +17,7 @@ from visualizer import reddit_pandas
 #-----------------------
 
 data_dir = "data"
+junk_dir = f"{data_dir}/junk"
 raw_dir = f"{data_dir}/raw"
 reap_dir = f"{data_dir}/processed"
 vibe_dir = f"{reap_dir}/sentiments"
@@ -53,8 +54,8 @@ def reddit_process():
         print(f"Error: {explicit_path} does not exist")
 
 def main():
-    return None
 
 if __name__ == "__main__":
-    reddit_process() # Creates files relevant to reddit posts
-    reddit_graph()   # Creates graphs from files
+#    reddit_process() # Creates files relevant to reddit posts
+#    reddit_graph()   # Creates graphs from files
+#    main()
